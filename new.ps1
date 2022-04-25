@@ -1,14 +1,16 @@
-new-module -name foobar -scriptblock {
+new-module -name Installer -scriptblock {
   Function Install-Project() {
     param (
-      [string]$project = 'chef',
-      [string]$channel = 'stable'
+      [Parameter(Mandatory = $true)] $user,
+      [Parameter(Mandatory = $true)] $repo,
+      [string]$branch = 'master',
+      [bool]$remove = $false
     )
-    echo $project $channgel
+
+    Write-Output $user $repo
   }
 
   set-alias install -value Install-Project
-
   export-modulemember -function 'Install-Project' -alias 'install'
   }
   
