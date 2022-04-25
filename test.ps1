@@ -1,13 +1,25 @@
-new-module -name foobar -scriptblock {
-  Function Install-Project() {
+new-module -name Installer -scriptblock {
+  function install() {
     param (
-      [string]$project = 'chef',
-      [string]$channel = 'stable'
+      [Parameter(Mandatory = $true)] $user,
+      [Parameter(Mandatory = $true)] $repo,
+      [string]$branch = "master",
+      [bool]$remove = $false
     )
-    echo $project $channgel
+
+    $reposUrl = "https://api.github.com/repos/$user/$repo"
+    $archiveUrl = "https://github.com/$user/$repo/archive/$branch.zip"
+
+    $statusCode = Invoke-WebRequest $reposUrl | Select-Object -Expand StatusCode
+
+    if($statusCode -eq 200){
+      Write-Output "success"
+    }
+    else {
+      Write-Error "$user/$repo repository not found"
+    }
   }
 
-  set-alias install -value Install-Project
-
-  export-modulemember -alias 'install'
+  export-modulemember -function "install"
 }
+  
