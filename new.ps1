@@ -9,6 +9,6 @@ new-module -name foobar -scriptblock {
 
   set-alias install -value Install-Project
 
-  export-modulemember -alias 'install'
+  export-modulemember -function 'Install-Project' -alias 'install'
   }
   
