@@ -1,5 +1,5 @@
 new-module -name Installer -scriptblock {
-  Function Install-Project() {
+  Function install() {
     param (
       [Parameter(Mandatory = $true)] $user,
       [Parameter(Mandatory = $true)] $repo,
@@ -10,7 +10,5 @@ new-module -name Installer -scriptblock {
     Write-Output $user $repo
   }
 
-  set-alias install -value Install-Project
-  export-modulemember -function 'Install-Project' -alias 'install'
-  }
-  
+  export-modulemember -function 'install'
+}
