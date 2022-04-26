@@ -15,7 +15,7 @@ new-module -name Installer -scriptblock {
     $statusCode = Invoke-WebRequest $reposUrl | Select-Object -Expand StatusCode
 
     if($statusCode -eq 200){
-      Invoke-WebRequest -Uri $archiveUrl -OutFile deneme.zip
+      Invoke-WebRequest -Uri $archiveUrl -OutFile $repo.zip
     }
     else {
       Write-Error "$user/$repo repository not found"
