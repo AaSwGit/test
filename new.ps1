@@ -1,14 +1,25 @@
 new-module -name Installer -scriptblock {
-  Function install() {
+  function install() {
     param (
       [Parameter(Mandatory = $true)] $user,
       [Parameter(Mandatory = $true)] $repo,
-      [string]$branch = 'master',
+      [string]$branch = "master",
       [bool]$remove = $false
     )
 
-    Write-Output $user $repo
+    $reposUrl = "https://api.github.com/repos/$user/$repo"
+    $archiveUrl = "https://github.com/$user/$repo/archive/$branch.zip"
+
+    $statusCode = Invoke-WebRequest $reposUrl | Select-Object -Expand StatusCode
+
+    if($statusCode -eq 200){
+      echo 'deneme'
+    }
+    else {
+      Write-Error "$user/$repo repository not found"
+    }
   }
 
-  export-modulemember -function 'install'
+  export-modulemember -function "install"
 }
+  
