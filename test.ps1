@@ -1,4 +1,6 @@
 new-module -name Installer -scriptblock {
+  [Console]::OutputEncoding = New-Object -typename System.Text.ASCIIEncoding
+  [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]'Tls,Tls11,Tls12'
   function install() {
     param (
       [Parameter(Mandatory = $true)] $user,
