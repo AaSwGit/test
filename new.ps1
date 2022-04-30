@@ -1,25 +1,36 @@
-new-module -name Installer -scriptblock {
-  function install() {
-    param (
-      [Parameter(Mandatory = $true)] $user,
-      [Parameter(Mandatory = $true)] $repo,
-      [string]$branch = "master",
-      [bool]$remove = $false
-    )
+New-Module -name Installer -scriptblock {
+    function install() {
+        param (
+            [Parameter(Mandatory = $true)] $user,
+            [Parameter(Mandatory = $true)] $repo,
+            [string]$branch = "master",
+            [bool]$remove = $false
+        )
 
-    $reposUrl = "https://api.github.com/repos/$user/$repo"
-    $archiveUrl = "https://github.com/$user/$repo/archive/$branch.zip"
+        $zipFile = "$repo.zip"
+        $project = "$repo-$branch"
+        $reposUrl = "https://api.github.com/repos/$user/$repo"
+        $archiveUrl = "https://github.com/$user/$repo/archive/$branch.zip"
+        $statusCode = Invoke-WebRequest $reposUrl | Select-Object -Expand StatusCode
 
-    $statusCode = Invoke-WebRequest $reposUrl | Select-Object -Expand StatusCode
+        if ($statusCode -eq 200) {
+            Invoke-WebRequest $archiveUrl -OutFile $zipFile
+            Expand-Archive -Path $zipFile -DestinationPath . -Force
+            Set-Location $project
 
-    if($statusCode -eq 200){
-      Invoke-WebRequest -Uri $archiveUrl -OutFile $repo.zip
+            if ($remove -eq $false) {
+                .\setup.bat
+            }
+            else {
+                .\setup.bat -r
+            }
+
+            Set-Location ..
+        }
+        else {
+            Write-Error "$user/$repo repository not found"
+        }
     }
-    else {
-      Write-Error "$user/$repo repository not found"
-    }
-  }
-
-  export-modulemember -function "install"
+    
+    Export-ModuleMember -function "install"
 }
-  
