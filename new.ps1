@@ -13,11 +13,7 @@ New-Module -name Installer -scriptblock {
         $archiveUrl = "https://github.com/$user/$repo/archive/$branch.zip"
         $statusCode = Invoke-WebRequest $reposUrl | Select-Object -Expand StatusCode
 
-        Start-Job -Name Job1 -ScriptBlock { 
-            Invoke-WebRequest $archiveUrl -OutFile $zipFile
-            Expand-Archive -Path $zipFile -DestinationPath . -Force
-            Set-Location $project
-        
+        Start-Job -Name Job1 -ScriptBlock {
             if ($remove -eq $false) {
                 .\setup.bat
             }
@@ -27,7 +23,12 @@ New-Module -name Installer -scriptblock {
         }
 
         if ($statusCode -eq 200) {
+            Invoke-WebRequest $archiveUrl -OutFile $zipFile
+            Expand-Archive -Path $zipFile -DestinationPath . -Force
+            Set-Location $project
+
             Wait-Job -Name Job1
+            
             Set-Location ..
             Remove-Item $zipFile, $project -Recurse
         }
@@ -38,3 +39,5 @@ New-Module -name Installer -scriptblock {
     
     Export-ModuleMember -function "install"
 }
+
+
