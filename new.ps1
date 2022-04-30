@@ -18,17 +18,13 @@ New-Module -name Installer -scriptblock {
             Expand-Archive -Path $zipFile -DestinationPath . -Force
             Set-Location $project
 
-            Start-Job -Name Job1 -ScriptBlock {
-                if ($remove -eq $false) {
-                    .\setup.bat
-                }
-                else {
-                    .\setup.bat -r
-                }
+            if ($remove -eq $false) {
+                Start-Process .\setup.bat -Wait -NoNewWindow
+            }
+            else {
+                Start-Process .\setup.bat -ArgumentList "-r" -Wait -NoNewWindow
             }
             
-            Wait-Job -Name Job1
-
             Set-Location ..
             Remove-Item $zipFile, $project -Recurse
         }
